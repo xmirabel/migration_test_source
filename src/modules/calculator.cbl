@@ -1,0 +1,17 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CALCULATOR.
+       
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       
+       LINKAGE SECTION.
+       01 LS-NUM1        PIC 9(5)V99.
+       01 LS-NUM2        PIC 9(5)V99.
+       01 LS-RESULT      PIC 9(6)V99.
+       
+       PROCEDURE DIVISION USING LS-NUM1, LS-NUM2, LS-RESULT.
+       MAIN-PROCEDURE.
+           ADD LS-NUM1 TO LS-NUM2 GIVING LS-RESULT
+           
+           GOBACK.
+       END PROGRAM CALCULATOR.
