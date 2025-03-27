@@ -38,13 +38,14 @@ message(STATUS "GnuCOBOL trouvé: ${COBC_EXECUTABLE}")
 # Définir explicitement le compilateur C
 set(CMAKE_C_COMPILER ${GCC_EXECUTABLE})
 
-# Options de compilation pour GnuCOBOL avec suppression des avertissements _FORTIFY_SOURCE
-set(COBC_FLAGS "-x" "-Wall" "-std=default" "-debug" "-K" "\"-Wno-builtin-macro-redefined\"")
+# Options de compilation pour GnuCOBOL
+set(COBC_FLAGS_EXEC "-Wall" "-std=default" "-debug")
+set(COBC_FLAGS_MODULE "-Wall" "-std=default" "-debug")
 
 # Répertoires d'inclusion
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# Fonction pour compiler les fichiers COBOL
+# Fonction pour compiler les fichiers COBOL en exécutables
 function(add_cobol_executable target_name main_source)
     # Utiliser un chemin de sortie absolu pour éviter les conflits
     set(cobc_output "${CMAKE_BINARY_DIR}/${target_name}")
@@ -52,8 +53,8 @@ function(add_cobol_executable target_name main_source)
     # Commande pour compiler le programme principal avec suppression des avertissements
     add_custom_command(
         OUTPUT ${cobc_output}
-        COMMAND ${CMAKE_COMMAND} -E env COB_CFLAGS="-Wno-builtin-macro-redefined" 
-                ${COBC_EXECUTABLE} ${COBC_FLAGS} -o ${cobc_output} ${main_source} ${ARGN}
+        COMMAND ${CMAKE_COMMAND} -E env "COB_CFLAGS=-w" 
+                ${COBC_EXECUTABLE} -x ${COBC_FLAGS_EXEC} -o ${cobc_output} ${main_source} ${ARGN}
         DEPENDS ${main_source} ${ARGN}
         COMMENT "Compiling COBOL executable ${target_name}"
         VERBATIM
@@ -63,30 +64,50 @@ function(add_cobol_executable target_name main_source)
     add_custom_target(${target_name} ALL DEPENDS ${cobc_output})
 endfunction()
 
-# Vérifier si le répertoire src existe, sinon le créer
-if(NOT EXISTS "${CMAKE_SOURCE_DIR}/src")
-    message(STATUS "Création du répertoire src...")
-    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/src")
+# Fonction pour compiler les modules COBOL
+function(add_cobol_module target_name source_file)
+    # Utiliser un chemin de sortie absolu pour éviter les conflits
+    set(cobc_output "${CMAKE_BINARY_DIR}/lib${target_name}.so")
     
-    # Créer un exemple minimal de programme COBOL
-    file(WRITE "${CMAKE_SOURCE_DIR}/src/hello.cbl"
-"       IDENTIFICATION DIVISION.
-       PROGRAM-ID. HELLO.
-       
-       PROCEDURE DIVISION.
-       MAIN-PROCEDURE.
-           DISPLAY \"Hello, World!\".
-           STOP RUN.
-")
+    # Commande pour compiler le module avec suppression des avertissements
+    add_custom_command(
+        OUTPUT ${cobc_output}
+        COMMAND ${CMAKE_COMMAND} -E env "COB_CFLAGS=-w" 
+                ${COBC_EXECUTABLE} -m ${COBC_FLAGS_MODULE} -o ${cobc_output} ${source_file} ${ARGN}
+        DEPENDS ${source_file} ${ARGN}
+        COMMENT "Compiling COBOL module ${target_name}"
+        VERBATIM
+    )
     
-    # Créer un CMakeLists.txt pour src
-    file(WRITE "${CMAKE_SOURCE_DIR}/src/CMakeLists.txt"
-"# Compiler le programme principal
-add_cobol_executable(hello_world 
-    ${CMAKE_CURRENT_SOURCE_DIR}/hello.cbl
-)
-")
-endif()
+    # Cible personnalisée pour le module
+    add_custom_target(${target_name} ALL DEPENDS ${cobc_output})
+endfunction()
+
+# Fonction pour compiler les tests COBOL
+function(add_cobol_test target_name source_file)
+    # Utiliser un chemin de sortie absolu pour éviter les conflits
+    set(cobc_output "${CMAKE_BINARY_DIR}/test_${target_name}")
+    
+    # Commande pour compiler le test avec suppression des avertissements
+    add_custom_command(
+        OUTPUT ${cobc_output}
+        COMMAND ${CMAKE_COMMAND} -E env "COB_CFLAGS=-w" 
+                ${COBC_EXECUTABLE} -x ${COBC_FLAGS_EXEC} -o ${cobc_output} ${source_file} ${ARGN}
+        DEPENDS ${source_file} ${ARGN}
+        COMMENT "Compiling COBOL test ${target_name}"
+        VERBATIM
+    )
+    
+    # Cible personnalisée pour le test
+    add_custom_target(test_${target_name} ALL DEPENDS ${cobc_output})
+    
+    # Ajouter le test à CTest
+    add_test(NAME ${target_name} COMMAND ${cobc_output})
+endfunction()
+
+# Activer les tests
+enable_testing()
 
 # Sous-répertoires du projet
 add_subdirectory(src)
+add_subdirectory(tests)

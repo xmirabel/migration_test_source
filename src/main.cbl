@@ -16,6 +16,9 @@
        01 WS-FORMATTED-DATE     PIC X(10).
        01 WS-USER-NAME          PIC X(30).
        01 WS-GREETING           PIC X(50).
+       01 WS-FILENAME           PIC X(100).
+       01 WS-FILE-CONTENT       PIC X(1000).
+       01 WS-FILE-STATUS        PIC 9(2).
        
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
@@ -38,6 +41,20 @@
            CALL "CALCULATOR" USING WS-NUM1, WS-NUM2, WS-RESULT
            
            DISPLAY "Résultat de l'addition: " WS-RESULT
+           
+           MOVE "output.txt" TO WS-FILENAME
+           STRING "Résultat du calcul: " DELIMITED BY SIZE
+                  WS-RESULT DELIMITED BY SIZE
+                  INTO WS-FILE-CONTENT
+           
+           CALL "FILE_HANDLER" USING WS-FILENAME, WS-FILE-CONTENT, 
+                                     WS-FILE-STATUS
+           
+           IF WS-FILE-STATUS = 0
+              DISPLAY "Le résultat a été enregistré dans " WS-FILENAME
+           ELSE
+              DISPLAY "Erreur lors de l'enregistrement du fichier"
+           END-IF
            
            STOP RUN.
        END PROGRAM MAIN.
