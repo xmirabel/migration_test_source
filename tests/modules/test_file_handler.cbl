@@ -19,18 +19,14 @@
        01 WS-FILE-STATUS          PIC 9(2).
        01 WS-TEST-FILE-STATUS     PIC X(2).
        01 WS-READ-CONTENT         PIC X(100).
+       01 WS-TEST-RESULT          PIC 9(1) VALUE 0.
        
-       LINKAGE SECTION.
-       01 LS-TEST-RESULT          PIC 9(1).
-       
-       PROCEDURE DIVISION USING LS-TEST-RESULT.
+       PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            DISPLAY "  Test d'écriture de fichier..."
            
-           MOVE 0 TO LS-TEST-RESULT
-           
            CALL "FILE_HANDLER" USING WS-FILENAME, WS-CONTENT, 
-                                     WS-FILE-STATUS
+                                    WS-FILE-STATUS
            
            IF WS-FILE-STATUS = 0
               DISPLAY "  OK: Fichier écrit avec succès"
@@ -45,24 +41,25 @@
                        DISPLAY "  ÉCHEC: Contenu du fichier incorrect"
                        DISPLAY "    Attendu: " WS-CONTENT
                        DISPLAY "    Obtenu: " WS-READ-CONTENT
-                       MOVE 1 TO LS-TEST-RESULT
+                       MOVE 1 TO WS-TEST-RESULT
                     END-IF
                  ELSE
                     DISPLAY "  ÉCHEC: Erreur lors de la lecture du fichier"
                     DISPLAY "    Code d'erreur: " WS-TEST-FILE-STATUS
-                    MOVE 1 TO LS-TEST-RESULT
+                    MOVE 1 TO WS-TEST-RESULT
                  END-IF
                  CLOSE TEST-FILE
               ELSE
                  DISPLAY "  ÉCHEC: Erreur lors de l'ouverture du fichier"
                  DISPLAY "    Code d'erreur: " WS-TEST-FILE-STATUS
-                 MOVE 1 TO LS-TEST-RESULT
+                 MOVE 1 TO WS-TEST-RESULT
               END-IF
            ELSE
               DISPLAY "  ÉCHEC: Erreur lors de l'écriture du fichier"
               DISPLAY "    Code d'erreur: " WS-FILE-STATUS
-              MOVE 1 TO LS-TEST-RESULT
+              MOVE 1 TO WS-TEST-RESULT
            END-IF
            
-           GOBACK.
+           MOVE WS-TEST-RESULT TO RETURN-CODE
+           STOP RUN.
        END PROGRAM TEST_FILE_HANDLER.

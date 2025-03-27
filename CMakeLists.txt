@@ -57,7 +57,7 @@ function(add_cobol_executable target_name main_source)
                 ${COBC_EXECUTABLE} -x ${COBC_FLAGS_EXEC} -o ${cobc_output} ${main_source} ${ARGN}
         DEPENDS ${main_source} ${ARGN}
         COMMENT "Compiling COBOL executable ${target_name}"
-        VERBATIM
+                VERBATIM
     )
     
     # Cible personnalisée pour le programme
@@ -81,28 +81,6 @@ function(add_cobol_module target_name source_file)
     
     # Cible personnalisée pour le module
     add_custom_target(${target_name} ALL DEPENDS ${cobc_output})
-endfunction()
-
-# Fonction pour compiler les tests COBOL
-function(add_cobol_test target_name source_file)
-    # Utiliser un chemin de sortie absolu pour éviter les conflits
-    set(cobc_output "${CMAKE_BINARY_DIR}/test_${target_name}")
-    
-    # Commande pour compiler le test avec suppression des avertissements
-    add_custom_command(
-        OUTPUT ${cobc_output}
-        COMMAND ${CMAKE_COMMAND} -E env "COB_CFLAGS=-w" 
-                ${COBC_EXECUTABLE} -x ${COBC_FLAGS_EXEC} -o ${cobc_output} ${source_file} ${ARGN}
-        DEPENDS ${source_file} ${ARGN}
-        COMMENT "Compiling COBOL test ${target_name}"
-        VERBATIM
-    )
-    
-    # Cible personnalisée pour le test
-    add_custom_target(test_${target_name} ALL DEPENDS ${cobc_output})
-    
-    # Ajouter le test à CTest
-    add_test(NAME ${target_name} COMMAND ${cobc_output})
 endfunction()
 
 # Activer les tests

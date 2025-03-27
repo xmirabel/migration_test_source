@@ -9,15 +9,11 @@
           05 WS-DAY               PIC 9(2) VALUE 15.
        01 WS-FORMATTED-DATE       PIC X(10).
        01 WS-EXPECTED-DATE        PIC X(10) VALUE "15/05/2023".
+       01 WS-TEST-RESULT          PIC 9(1) VALUE 0.
        
-       LINKAGE SECTION.
-       01 LS-TEST-RESULT          PIC 9(1).
-       
-       PROCEDURE DIVISION USING LS-TEST-RESULT.
+       PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            DISPLAY "  Test de formatage de date..."
-           
-           MOVE 0 TO LS-TEST-RESULT
            
            CALL "DATE_UTILS" USING WS-DATE, WS-FORMATTED-DATE
            
@@ -27,8 +23,9 @@
               DISPLAY "  ÉCHEC: Date incorrecte"
               DISPLAY "    Attendu: " WS-EXPECTED-DATE
               DISPLAY "    Obtenu: " WS-FORMATTED-DATE
-              MOVE 1 TO LS-TEST-RESULT
+              MOVE 1 TO WS-TEST-RESULT
            END-IF
            
-           GOBACK.
+           MOVE WS-TEST-RESULT TO RETURN-CODE
+           STOP RUN.
        END PROGRAM TEST_DATE_UTILS.

@@ -3,29 +3,29 @@
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 WS-TEST-RESULT          PIC 9(1) VALUE 0.
        01 WS-TEST-COUNT           PIC 9(3) VALUE 0.
        01 WS-TEST-PASSED          PIC 9(3) VALUE 0.
        01 WS-TEST-FAILED          PIC 9(3) VALUE 0.
+       01 WS-RETURN-CODE          PIC S9(9) COMP-5.
        
        PROCEDURE DIVISION.
        MAIN-PROCEDURE.
            DISPLAY "=== Exécution des tests unitaires ==="
            
            DISPLAY "Test des utilitaires de date..."
-           CALL "TEST_DATE_UTILS" USING WS-TEST-RESULT
+           CALL "SYSTEM" USING "./test_date_utils" RETURNING WS-RETURN-CODE
            PERFORM UPDATE-TEST-COUNT
            
            DISPLAY "Test des utilitaires de chaîne..."
-           CALL "TEST_STRING_UTILS" USING WS-TEST-RESULT
+           CALL "SYSTEM" USING "./test_string_utils" RETURNING WS-RETURN-CODE
            PERFORM UPDATE-TEST-COUNT
            
            DISPLAY "Test de la calculatrice..."
-           CALL "TEST_CALCULATOR" USING WS-TEST-RESULT
+           CALL "SYSTEM" USING "./test_calculator" RETURNING WS-RETURN-CODE
            PERFORM UPDATE-TEST-COUNT
            
            DISPLAY "Test du gestionnaire de fichiers..."
-           CALL "TEST_FILE_HANDLER" USING WS-TEST-RESULT
+           CALL "SYSTEM" USING "./test_file_handler" RETURNING WS-RETURN-CODE
            PERFORM UPDATE-TEST-COUNT
            
            DISPLAY "=== Résumé des tests ==="
@@ -45,9 +45,9 @@
            
        UPDATE-TEST-COUNT.
            ADD 1 TO WS-TEST-COUNT
-           IF WS-TEST-RESULT = 0
+           IF WS-RETURN-CODE = 0
               ADD 1 TO WS-TEST-PASSED
            ELSE
               ADD 1 TO WS-TEST-FAILED
            END-IF.
-       END PROGRAM TEST-RUNNER.
+       END PROGRAM TEST-RUNNER
