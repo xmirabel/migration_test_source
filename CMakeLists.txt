@@ -45,8 +45,10 @@ set(COBC_FLAGS "-x" "-Wall" "-std=default" "-debug")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Fonction pour compiler les fichiers COBOL
+# Fonction pour compiler les fichiers COBOL
 function(add_cobol_executable target_name main_source)
-    set(cobc_output "${CMAKE_CURRENT_BINARY_DIR}/${target_name}")
+    # Utiliser un chemin de sortie absolu pour éviter les conflits
+    set(cobc_output "${CMAKE_BINARY_DIR}/${target_name}")
     
     # Commande pour compiler le programme principal
     add_custom_command(
@@ -61,9 +63,29 @@ function(add_cobol_executable target_name main_source)
     add_custom_target(${target_name} ALL DEPENDS ${cobc_output})
 endfunction()
 
-# Vérifier si le répertoire src existe
+# Vérifier si le répertoire src existe, sinon le créer
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/src")
-    message(FATAL_ERROR "Le répertoire src n'existe pas. Veuillez créer une structure de projet appropriée.")
+    message(STATUS "Création du répertoire src...")
+    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/src")
+    
+    # Créer un exemple minimal de programme COBOL
+    file(WRITE "${CMAKE_SOURCE_DIR}/src/hello.cbl"
+"       IDENTIFICATION DIVISION.
+       PROGRAM-ID. HELLO.
+       
+       PROCEDURE DIVISION.
+       MAIN-PROCEDURE.
+           DISPLAY \"Hello, World!\".
+           STOP RUN.
+")
+    
+    # Créer un CMakeLists.txt pour src
+    file(WRITE "${CMAKE_SOURCE_DIR}/src/CMakeLists.txt"
+"# Compiler le programme principal
+add_cobol_executable(hello_world 
+    ${CMAKE_CURRENT_SOURCE_DIR}/hello.cbl
+)
+")
 endif()
 
 # Sous-répertoires du projet
