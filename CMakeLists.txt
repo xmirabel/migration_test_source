@@ -38,22 +38,22 @@ message(STATUS "GnuCOBOL trouvé: ${COBC_EXECUTABLE}")
 # Définir explicitement le compilateur C
 set(CMAKE_C_COMPILER ${GCC_EXECUTABLE})
 
-# Options de compilation pour GnuCOBOL
-set(COBC_FLAGS "-x" "-Wall" "-std=default" "-debug")
+# Options de compilation pour GnuCOBOL avec suppression des avertissements _FORTIFY_SOURCE
+set(COBC_FLAGS "-x" "-Wall" "-std=default" "-debug" "-K" "\"-Wno-builtin-macro-redefined\"")
 
 # Répertoires d'inclusion
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Fonction pour compiler les fichiers COBOL
-# Fonction pour compiler les fichiers COBOL
 function(add_cobol_executable target_name main_source)
     # Utiliser un chemin de sortie absolu pour éviter les conflits
     set(cobc_output "${CMAKE_BINARY_DIR}/${target_name}")
     
-    # Commande pour compiler le programme principal
+    # Commande pour compiler le programme principal avec suppression des avertissements
     add_custom_command(
         OUTPUT ${cobc_output}
-        COMMAND ${COBC_EXECUTABLE} ${COBC_FLAGS} -o ${cobc_output} ${main_source} ${ARGN}
+        COMMAND ${CMAKE_COMMAND} -E env COB_CFLAGS="-Wno-builtin-macro-redefined" 
+                ${COBC_EXECUTABLE} ${COBC_FLAGS} -o ${cobc_output} ${main_source} ${ARGN}
         DEPENDS ${main_source} ${ARGN}
         COMMENT "Compiling COBOL executable ${target_name}"
         VERBATIM
