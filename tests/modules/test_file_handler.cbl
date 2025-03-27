@@ -25,8 +25,13 @@
        MAIN-PROCEDURE.
            DISPLAY "  Test d'écriture de fichier..."
            
-           CALL "FILE_HANDLER" USING WS-FILENAME, WS-CONTENT, 
-                                    WS-FILE-STATUS
+           MOVE "test_output.txt" TO WS-FILENAME
+           MOVE "Contenu de test" TO WS-CONTENT
+           
+           CALL "FILE_HANDLER" 
+               USING WS-FILENAME 
+                     WS-CONTENT 
+                     WS-FILE-STATUS
            
            IF WS-FILE-STATUS = 0
               DISPLAY "  OK: Fichier écrit avec succès"
@@ -44,19 +49,19 @@
                        MOVE 1 TO WS-TEST-RESULT
                     END-IF
                  ELSE
-                    DISPLAY "  ÉCHEC: Erreur lors de la lecture du fichier"
-                    DISPLAY "    Code d'erreur: " WS-TEST-FILE-STATUS
+                    DISPLAY "  ÉCHEC: Erreur lors de la lecture"
+                    DISPLAY "    Code: " WS-TEST-FILE-STATUS
                     MOVE 1 TO WS-TEST-RESULT
                  END-IF
                  CLOSE TEST-FILE
               ELSE
-                 DISPLAY "  ÉCHEC: Erreur lors de l'ouverture du fichier"
-                 DISPLAY "    Code d'erreur: " WS-TEST-FILE-STATUS
+                 DISPLAY "  ÉCHEC: Erreur lors de l'ouverture"
+                 DISPLAY "    Code: " WS-TEST-FILE-STATUS
                  MOVE 1 TO WS-TEST-RESULT
               END-IF
            ELSE
-              DISPLAY "  ÉCHEC: Erreur lors de l'écriture du fichier"
-              DISPLAY "    Code d'erreur: " WS-FILE-STATUS
+              DISPLAY "  ÉCHEC: Erreur lors de l'écriture"
+              DISPLAY "    Code: " WS-FILE-STATUS
               MOVE 1 TO WS-TEST-RESULT
            END-IF
            
