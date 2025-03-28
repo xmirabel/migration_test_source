@@ -19,6 +19,19 @@ add_custom_command(
 
 add_custom_target(cobol_app_exe ALL DEPENDS ${CMAKE_BINARY_DIR}/cobol_app_exe)
 
+# Créer des liens symboliques pour les modules
+add_custom_command(
+    TARGET cobol_app_exe
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libstring_utils.so STRING_UTILS.so
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libdate_utils.so DATE_UTILS.so
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libcalculator.so CALCULATOR.so
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libfile_handler.so FILE_HANDLER.so
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Creating symbolic links for modules"
+    VERBATIM
+)
+
 # Créer un script d'exécution
 set(run_script "${CMAKE_BINARY_DIR}/run_app.sh")
 file(WRITE ${run_script} "#!/bin/bash\n")
