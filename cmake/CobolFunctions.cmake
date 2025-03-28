@@ -8,7 +8,7 @@ function(add_cobol_executable target_name main_source)
     file(WRITE ${compile_script} "#!/bin/bash\n")
     file(APPEND ${compile_script} "cd ${CMAKE_BINARY_DIR}\n")
     file(APPEND ${compile_script} "export COB_CFLAGS=-w\n")
-    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -x -Wall -std=default -debug -o ${target_name} \"${main_source}\"")
+    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -x -Wall -std=default -debug -o ${main_source}")
     
     # Ajouter les arguments supplémentaires
     foreach(arg IN LISTS ARGN)
@@ -42,7 +42,7 @@ function(add_cobol_module target_name source_file module_name)
     set(compile_script "${CMAKE_BINARY_DIR}/compile_${target_name}.sh")
     file(WRITE ${compile_script} "#!/bin/bash\n")
     file(APPEND ${compile_script} "cd ${CMAKE_BINARY_DIR}\n")
-    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -m -Wall -std=default -debug -o lib${target_name}.so -module-name=${module_name} \"${source_file}\"\n")
+    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -m -Wall -std=default -debug -o lib${target_name}.so \"-module-name=${module_name}\" \"${source_file}\"\n")
     
     # Rendre le script exécutable
     execute_process(COMMAND chmod +x ${compile_script})
