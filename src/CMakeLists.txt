@@ -5,7 +5,7 @@ add_subdirectory(modules)
 # Compiler le programme principal
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/cobol_app_exe
-    COMMAND cd ${CMAKE_BINARY_DIR} && ${COBC_EXECUTABLE} -x ${COBC_FLAGS_EXEC} -o cobol_app_exe 
+    COMMAND cd ${CMAKE_BINARY_DIR} && ${COBC_EXECUTABLE} -x -Wall -std=default -debug -o cobol_app_exe 
             ${CMAKE_CURRENT_SOURCE_DIR}/main.cbl
             ${CMAKE_BINARY_DIR}/libdate_utils.so
             ${CMAKE_BINARY_DIR}/libstring_utils.so

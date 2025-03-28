@@ -39,8 +39,8 @@ message(STATUS "GnuCOBOL trouvé: ${COBC_EXECUTABLE}")
 set(CMAKE_C_COMPILER ${GCC_EXECUTABLE})
 
 # Options de compilation pour GnuCOBOL
-set(COBC_FLAGS_EXEC "-Wall -std=default -debug")
-set(COBC_FLAGS_MODULE "-Wall -std=default -debug")
+set(COBC_FLAGS_EXEC -Wall -std=default -debug)
+set(COBC_FLAGS_MODULE -Wall -std=default -debug)
 
 # Répertoires d'inclusion
 include_directories(${CMAKE_SOURCE_DIR}/include)
