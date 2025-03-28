@@ -72,3 +72,6 @@ file(APPEND ${run_tests_script} "fi\n")
 execute_process(COMMAND chmod +x ${run_tests_script})
 
 message(STATUS "Script d'exécution des tests créé: ${run_tests_script}")
+
+# Ajouter un test global qui exécute tous les tests
+add_test(NAME all_tests COMMAND ${CMAKE_BINARY_DIR}/run_tests.sh)

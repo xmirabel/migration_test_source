@@ -1,0 +1,34 @@
+@startuml execution-flow
+!theme plain
+
+start
+:Démarrage de l'application;
+:Affichage du message d'accueil;
+
+:Préparation du nom d'utilisateur;
+:Appel à STRING_UTILS pour générer une salutation;
+:Affichage de la salutation;
+
+:Récupération de la date actuelle;
+:Appel à DATE_UTILS pour formater la date;
+:Affichage de la date formatée;
+
+:Demande du premier nombre;
+:Saisie du premier nombre;
+:Demande du deuxième nombre;
+:Saisie du deuxième nombre;
+
+:Appel à CALCULATOR pour additionner les nombres;
+:Affichage du résultat;
+
+:Préparation du contenu du fichier;
+:Appel à FILE_HANDLER pour écrire dans un fichier;
+
+if (Écriture réussie?) then (oui)
+  :Affichage du message de succès;
+else (non)
+  :Affichage du message d'erreur;
+endif
+
+stop
+@enduml
