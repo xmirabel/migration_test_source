@@ -8,7 +8,7 @@ function(add_cobol_executable target_name main_source)
     file(WRITE ${compile_script} "#!/bin/bash\n")
     file(APPEND ${compile_script} "cd ${CMAKE_BINARY_DIR}\n")
     file(APPEND ${compile_script} "export COB_CFLAGS=-w\n")
-    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -x -Wall -std=default -debug -o ${main_source}")
+    file(APPEND ${compile_script} "${COBC_EXECUTABLE} -x -Wall -std=default -debug -o ${target_name} \"${main_source}\"")
     
     # Ajouter les arguments supplémentaires
     foreach(arg IN LISTS ARGN)
