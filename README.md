@@ -2,6 +2,7 @@
 
 Ce projet est une application console développée en GnuCOBOL qui démontre l'utilisation de modules réutilisables et une architecture modulaire. L'application permet d'effectuer des opérations simples comme le formatage de dates, la manipulation de chaînes de caractères, des calculs arithmétiques et l'écriture de fichiers.
 
+
 ## Table des matières
 
 - [Fonctionnalités](#fonctionnalités)
