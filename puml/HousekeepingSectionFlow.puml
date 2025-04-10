@@ -1,0 +1,59 @@
+@startuml Housekeeping Flow
+title 1000-HOUSEKEEPING Section Flow
+
+start
+:Set LK991-SECTION to '1000-HOUSEKEEPING';
+:Set UTCHPRCLM3-NOT-CALLED to TRUE;
+:Move SPACES to LK-UTCHP02-DIRECTOR;
+
+if (LS-PHASE-1 OR LS-PHASE-2) then (yes)
+  :Continue;
+else (no)
+  :Move 'MISSING PHASE' to LK991-COMMENT-1;
+  :Go to 9999-ABORT-ROUTINE;
+  stop
+endif
+
+:Initialize various data structures;
+:Move GL102-FS-NO-IO to LK101-FILE-STATUS;
+:Perform 9800-OPEN-FILES;
+:Initialize CHP02-PROCESS-ERROR and PREV02-PROCESS-ERROR;
+:Set various CHP02 fields from CHP01;
+
+if (NOT LS-PHASE-1) then (yes)
+  :Go to 1000-50-CONTD;
+else (no)
+  :Initialize CHP20-RECLAIM-MASTER;
+  :Move CHP01-USER-ROAD to CHP20-USER-ROAD;
+  :Move GL102-IO-READ-NEXT to LK101-IO-COMMAND;
+  
+  while (NOT LK101-FS-EOF AND CHP20-RECLAIM-CODE-EXT != 'MAX ')
+    :Perform 9450-DBIO;
+  endwhile
+  
+  if (LK101-FS-EOF) then (yes)
+    :Move '  ' to LK101-FILE-STATUS;
+  else (no)
+    :Move CHP20-RECLAIM-CODE-EXT to D93-RECLAIM-CODE-EXT;
+  endif
+endif
+
+:1000-50-CONTD;
+:Initialize CHP20-RECLAIM-MASTER;
+:Move CHP01-USER-ROAD to CHP20-USER-ROAD;
+:Move GL102-IO-READ-NEXT to LK101-IO-COMMAND;
+:Perform 9400-DBIO;
+
+if (LK101-FS-EOF) then (yes)
+  :Move 'N' to D99-GO-NOGO-IND;
+endif
+
+:Move CHP01-USER-ROAD to CHP05-USER-ROAD and CHP82-USER-ROAD;
+:Move GL102-IO-READ-NEXT to LK101-IO-COMMAND;
+:Perform 9000-DBIO;
+:Move 'O' to UTCHPTTX-STATUS;
+:Call UTCHPTTX;
+:Move ' ' to UTCHPTTX-STATUS;
+:SECTION-EXIT;
+stop
+@enduml

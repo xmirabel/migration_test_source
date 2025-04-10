@@ -1,0 +1,47 @@
+@startuml Main Program Flow
+title IBMTEST3 Main Program Flow
+
+start
+:PROGRAM-ENTRY;
+:Call IOCHP01L1R;
+
+if (CHP01-ABORTED-IN-PGM not = SPACES) then (yes)
+  :Go to PROGRAM-EXIT;
+  stop
+endif
+
+if (CHP01-MODS-EFFECTIVE-MONTH not = SPACES AND\nCHP01-SERVICE-MONTH < CHP01-MODS-EFFECTIVE-MONTH) then (yes)
+  :Set UTCHP01-RETRIEVE-HIST to TRUE;
+else (no)
+  :Set UTCHP01-RETRIEVE-CURR to TRUE;
+endif
+
+:Set UTCHP01-NO-ERROR to TRUE;
+:Call UTCHP01;
+
+:Perform 1000-HOUSEKEEPING;
+
+while (not LK101-FS-EOF)
+  :Perform 2000-PROCESSING-LOOP;
+endwhile
+
+:Perform 9900-CLOSE-FILES;
+:Call IOCHP01L1U;
+
+if (LS-PHASE-1) then (yes)
+  if (CHP01-TOL-PARTICIPANT) then (yes)
+    if (CHP01-TR-VOLUNTARY OR CHP01-TP-ESTIMATE) then (yes)
+      :Call UTCHPRCLM2;
+    endif
+  endif
+endif
+
+if (LS-PHASE-1) then (yes)
+  if (D93-MAX-RECLAIM) then (yes)
+    :Call UTCHPRCLM5;
+  endif
+endif
+
+:PROGRAM-EXIT;
+stop
+@enduml

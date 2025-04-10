@@ -1,0 +1,43 @@
+@startuml DETECT-TOL-FAILURE Flow
+title 3400-DETECT-TOL-FAILURE Section Flow
+
+start
+:Set LK991-SECTION to '3400-FAILURE';
+
+if (CHP01-TR-VOLUNTARY OR CHP01-TP-ESTIMATE) then (yes)
+  :Continue;
+else (no)
+  :Go to SECTION-EXIT;
+  stop
+endif
+
+:Initialize CHP07-EQUIP-MOVEMENT-HISTORY;
+:Move CHP01-USER-ROAD to CHP07-USER-ROAD;
+:Move CHP05-TRIP-CONTROL-NBR to CHP07-TRIP-CONTROL-NBR and D95-TRIP-CONTROL-NBR;
+:Move SPACES to LK101-FILE-STATUS;
+:Move GL102-IO-READ-NEXT to LK101-IO-COMMAND;
+:Perform 9250-DBIO;
+
+if (CHP05-RECLAIM-CODE-EXT NOT = SPACES AND CHP05-RELOAD) then (yes)
+  while (NOT LK101-FS-EOF AND\nCHP07-TRIP-CONTROL-NBR = D95-TRIP-CONTROL-NBR AND\nNOT (CHP07-DS-TOL-RULE5-RECEIVABLE AND CHP07-DELIVERY))
+    :Perform 9250-DBIO;
+  endwhile
+else (no)
+  while (NOT LK101-FS-EOF AND\nCHP07-TRIP-CONTROL-NBR = D95-TRIP-CONTROL-NBR AND\nNOT CHP07-DS-TOL-RULE5-RECEIVABLE)
+    :Perform 9250-DBIO;
+  endwhile
+endif
+
+if (LK101-FS-EOF) then (yes)
+  :Go to 3400-50-FAILED;
+  note right: 3400-50-FAILED label not defined in the code snippet
+endif
+
+if (CHP07-TRIP-CONTROL-NBR NOT = D95-TRIP-CONTROL-NBR) then (yes)
+  :Go to 3400-50-FAILED;
+  note right: 3400-50-FAILED label not defined in the code snippet
+endif
+
+:SECTION-EXIT;
+stop
+@enduml

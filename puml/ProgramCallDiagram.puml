@@ -1,0 +1,23 @@
+@startuml Program Call Diagram
+title IBMTEST3 Program Call Diagram
+
+[IBMTEST3] as main
+
+component "External Programs" {
+  [IOCHP01L1R]
+  [UTCHP01]
+  [UTCHPRCLM2]
+  [UTCHPRCLM5]
+  [IOCHP01L1U]
+  [UTCHPTTX]
+}
+
+main --> [IOCHP01L1R] : calls
+main --> [UTCHP01] : calls
+main --> [UTCHPRCLM2] : calls conditionally
+main --> [UTCHPRCLM5] : calls conditionally
+main --> [IOCHP01L1U] : calls
+main --> [UTCHPTTX] : calls
+
+note right of main : Program flow depends on\nphase and condition flags
+@enduml
